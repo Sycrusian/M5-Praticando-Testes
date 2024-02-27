@@ -15,4 +15,14 @@ export class ToDoController {
     const response = this.services.readAll();
     return res.status(200).json(response);
   }
+
+  public update(req: Request, res: Response): Response {
+    const response = this.services.update(Number(res.locals.index), req.body);
+    return res.status(200).json(response);
+  }
+
+  public delete(req: Request, res: Response): Response {
+    this.services.delete(Number(res.locals.index));
+    return res.status(204).send();
+  }
 }

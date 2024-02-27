@@ -1,4 +1,4 @@
-import { ITodo, TCreateTodo } from "../../interfaces/todo";
+import { ITodo, TCreateTodo, TUpdateTodo } from "../../interfaces/todo";
 
 export const todoMock: ITodo = {
   id: 1,
@@ -9,6 +9,10 @@ export const todoMock: ITodo = {
 export const todoCreateMock: TCreateTodo = {
   title: "Example",
   description: "Description"
+}
+
+export const todoUpdateMock: TUpdateTodo = {
+  description: "Gangway!!"
 }
 
 export const todoListMock: ITodo[] = [

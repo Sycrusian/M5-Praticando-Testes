@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { resetToDoList, toDoList } from "../../database/database";
 import { ToDoServices } from "../../services/ToDoServices";
-import { todoCreateMock, todoListMock, todoMock } from "../mocks/todo.mock";
+import { todoCreateMock, todoListMock, todoMock, todoUpdateMock } from "../mocks/todo.mock";
 import { container } from "tsyringe";
 
 describe("Unit Test: Todo Services", () => {
@@ -21,5 +21,17 @@ describe("Unit Test: Todo Services", () => {
     const data = todoServices.readAll();
     expect(data).toHaveLength(3);
     expect(data[0]).toStrictEqual(todoMock);
+  });
+
+  test("Updating database should work correctly", () => {
+    toDoList.push(todoMock);
+    const data = todoServices.update(0, todoUpdateMock);
+    expect(data.description).toStrictEqual(toDoList[0].description);
+  });
+
+  test("Deleting from database should work correctly", () => {
+    toDoList.push(todoMock);
+    todoServices.delete(0);
+    expect(toDoList).toHaveLength(0);
   });
 });
