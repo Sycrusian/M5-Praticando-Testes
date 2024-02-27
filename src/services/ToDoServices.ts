@@ -1,8 +1,10 @@
+import { injectable } from "tsyringe";
 import { generateId, toDoList } from "../database/database";
 import { ITodo, TCreateTodo } from "../interfaces/todo";
 
+@injectable()
 export class ToDoServices {
-  create(payload: TCreateTodo) {
+  public create(payload: TCreateTodo) {
     const todo: ITodo = {
       id: generateId(),
       title: payload.title,
@@ -12,7 +14,7 @@ export class ToDoServices {
     return todo;
   }
 
-  readAll() {
+  public readAll() {
     return toDoList;
   }
 }

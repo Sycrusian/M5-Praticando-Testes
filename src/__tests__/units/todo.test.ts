@@ -1,9 +1,11 @@
+import "reflect-metadata";
 import { resetToDoList, toDoList } from "../../database/database";
 import { ToDoServices } from "../../services/ToDoServices";
-import { todoCreateMock, todoMock } from "../mocks/todo.mock";
+import { todoCreateMock, todoListMock, todoMock } from "../mocks/todo.mock";
+import { container } from "tsyringe";
 
 describe("Unit Test: Todo Services", () => {
-  const todoServices = new ToDoServices;
+  const todoServices = container.resolve(ToDoServices);
 
   beforeEach(() => {
     resetToDoList();
@@ -15,9 +17,9 @@ describe("Unit Test: Todo Services", () => {
   });
 
   test("Reading database should work correctly", () => {
-    toDoList.push(todoMock);
+    todoListMock.forEach(todo => toDoList.push(todo));
     const data = todoServices.readAll();
-    expect(data).toHaveLength(1);
+    expect(data).toHaveLength(3);
     expect(data[0]).toStrictEqual(todoMock);
   });
 });

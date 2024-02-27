@@ -1,4 +1,4 @@
-import { removeBearer } from "../..";
+import { removeBearer } from "../../utils";
 
 describe("Unit Test: Remove Bearer Function", () => {
   test("Should be able to remove the 'Bearer' word from a string", () => {
