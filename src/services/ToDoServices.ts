@@ -1,30 +1,26 @@
 import { injectable } from "tsyringe";
-import { generateId, toDoList } from "../database/database";
-import { ITodo, TCreateTodo, TUpdateTodo } from "../interfaces/todo";
+import { Todo, CreateTodo, UpdateTodo } from "../interfaces/todo";
+import { prisma } from "../database/prisma";
+import { todoSchema } from "../schemas/todo";
 
 @injectable()
 export class ToDoServices {
-  public create(payload: TCreateTodo) {
-    const todo: ITodo = {
-      id: generateId(),
-      title: payload.title,
-      description: payload.description
-    };
-    toDoList.push(todo);
-    return todo;
+  public async create(data: CreateTodo): Promise<Todo> {
+    const todo = await prisma.todo.create({ data });
+    return todoSchema.parse(todo);
   }
 
-  public readAll() {
-    return toDoList;
+  public async readAll(): Promise<Todo[]> {
+    const todoList = await prisma.todo.findMany();
+    return todoSchema.array().parse(todoList);
   }
 
-  public update(index: number, payload: TUpdateTodo) {
-    const updatedTodo = {...toDoList[index], ...payload};
-    toDoList[index] = updatedTodo;
-    return updatedTodo;
+  public async update(id: number, data: any): Promise<Todo> {
+    const updatedTodo = await prisma.todo.update({ where: { id }, data });
+    return todoSchema.parse(updatedTodo);
   }
 
-  public delete(index: number) {
-    toDoList.splice(index, 1);
+  public async delete(id: number) {
+    await prisma.todo.delete({ where: { id }});
   }
 }

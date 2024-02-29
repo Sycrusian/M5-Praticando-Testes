@@ -1,37 +1,43 @@
 import "reflect-metadata";
-import { resetToDoList, toDoList } from "../../database/database";
 import { ToDoServices } from "../../services/ToDoServices";
 import { todoCreateMock, todoListMock, todoMock, todoUpdateMock } from "../mocks/todo.mock";
 import { container } from "tsyringe";
+import { prisma } from "../../database/prisma";
 
 describe("Unit Test: Todo Services", () => {
   const todoServices = container.resolve(ToDoServices);
 
-  beforeEach(() => {
-    resetToDoList();
+  beforeEach(async () => {
+    await prisma.todo.deleteMany();
   });
 
-  test("Create todo should work correctly", () => {
-    const todo = todoServices.create(todoCreateMock);
-    expect(todo).toStrictEqual(todoMock);
+  test("Create todo should work correctly", async () => {
+    const todo = await todoServices.create(todoCreateMock);
+    expect(todo.id).toBeDefined();
+    expect(todo.title).toStrictEqual(todoCreateMock.title);
+    expect(todo.description).toStrictEqual(todoCreateMock.description);
   });
 
-  test("Reading database should work correctly", () => {
-    todoListMock.forEach(todo => toDoList.push(todo));
-    const data = todoServices.readAll();
+  test("Reading database should work correctly", async () => {
+    for (const todo of todoListMock) {
+      await prisma.todo.create({ data: todo });
+    }
+    const data = await todoServices.readAll();
     expect(data).toHaveLength(3);
-    expect(data[0]).toStrictEqual(todoMock);
+    expect(data[0].title).toStrictEqual(todoMock.title);
+    expect(data[0].description).toStrictEqual(todoMock.description);
   });
 
-  test("Updating database should work correctly", () => {
-    toDoList.push(todoMock);
-    const data = todoServices.update(0, todoUpdateMock);
-    expect(data.description).toStrictEqual(toDoList[0].description);
+  test("Updating database should work correctly", async () => {
+    const createdTodo = await prisma.todo.create({ data: todoCreateMock});
+    const data = await todoServices.update(Number(createdTodo.id), todoUpdateMock);
+    expect(data.description).toStrictEqual(todoUpdateMock.description);
   });
 
-  test("Deleting from database should work correctly", () => {
-    toDoList.push(todoMock);
-    todoServices.delete(0);
-    expect(toDoList).toHaveLength(0);
+  test("Deleting from database should work correctly", async () => {
+    const createdTodo = await prisma.todo.create({ data: todoCreateMock });
+    todoServices.delete(Number(createdTodo.id));
+    const data = await prisma.todo.findMany();
+    expect(data).toHaveLength(0);
   });
 });

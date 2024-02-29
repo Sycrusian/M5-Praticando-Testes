@@ -6,23 +6,23 @@ import { Request, Response } from "express";
 export class ToDoController {
   constructor(@inject("ToDoServices") private services: ToDoServices) {}
 
-  public create(req: Request, res: Response): Response {
-    const response = this.services.create(req.body);
+  public async create(req: Request, res: Response): Promise<Response> {
+    const response = await this.services.create(req.body);
     return res.status(201).json(response);
   }
 
-  public readAll(_req: Request, res: Response): Response {
-    const response = this.services.readAll();
+  public async readAll(_req: Request, res: Response): Promise<Response> {
+    const response = await this.services.readAll();
     return res.status(200).json(response);
   }
 
-  public update(req: Request, res: Response): Response {
-    const response = this.services.update(Number(res.locals.index), req.body);
+  public async update(req: Request, res: Response): Promise<Response> {
+    const response = await this.services.update(res.locals.foundTodo.id, req.body);
     return res.status(200).json(response);
   }
 
-  public delete(req: Request, res: Response): Response {
-    this.services.delete(Number(res.locals.index));
+  public async delete(_req: Request, res: Response): Promise<Response> {
+    await this.services.delete(Number(res.locals.foundTodo.id));
     return res.status(204).send();
   }
 }

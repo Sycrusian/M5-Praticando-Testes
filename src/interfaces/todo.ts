@@ -1,8 +1,6 @@
-export interface ITodo {
-  id: number;
-  title: string;
-  description: string;
-}
+import { z } from "zod";
+import { createTodoSchema, todoSchema, updateTodoSchema } from "../schemas/todo";
 
-export type TCreateTodo = Omit<ITodo, "id">;
-export type TUpdateTodo = Partial<TCreateTodo>;
+export type Todo = z.infer<typeof todoSchema>;
+export type CreateTodo = z.infer<typeof createTodoSchema>;
+export type UpdateTodo = z.infer<typeof updateTodoSchema>;
